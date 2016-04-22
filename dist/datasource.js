@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-System.register(["app/core/table_model"], function (_export, _context) {
-    var TableModel, _createClass, BosunDatasource;
+System.register(['app/core/table_model', 'moment'], function (_export, _context) {
+    var TableModel, moment, _createClass, BosunDatasource;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -12,6 +12,8 @@ System.register(["app/core/table_model"], function (_export, _context) {
     return {
         setters: [function (_appCoreTable_model) {
             TableModel = _appCoreTable_model.default;
+        }, function (_moment) {
+            moment = _moment.default;
         }],
         execute: function () {
             _createClass = function () {
@@ -32,10 +34,11 @@ System.register(["app/core/table_model"], function (_export, _context) {
                 };
             }();
 
-            _export("BosunDatasource", BosunDatasource = function () {
+            _export('BosunDatasource', BosunDatasource = function () {
                 function BosunDatasource(instanceSettings, $q, backendSrv, templateSrv) {
                     _classCallCheck(this, BosunDatasource);
 
+                    this.annotateUrl = instanceSettings.jsonData.annotateUrl;
                     this.type = instanceSettings.type;
                     this.url = instanceSettings.url;
                     this.name = instanceSettings.name;
@@ -45,7 +48,7 @@ System.register(["app/core/table_model"], function (_export, _context) {
                 }
 
                 _createClass(BosunDatasource, [{
-                    key: "makeTable",
+                    key: 'makeTable',
                     value: function makeTable(result) {
                         var table = new TableModel();
                         if (Object.keys(result).length < 1) {
@@ -71,7 +74,7 @@ System.register(["app/core/table_model"], function (_export, _context) {
                         return [table];
                     }
                 }, {
-                    key: "transformMetricData",
+                    key: 'transformMetricData',
                     value: function transformMetricData(result, target, options) {
                         var tagData = [];
                         _.each(result.Group, function (v, k) {
@@ -99,7 +102,7 @@ System.register(["app/core/table_model"], function (_export, _context) {
                         return { target: metricLabel, datapoints: dps };
                     }
                 }, {
-                    key: "performTimeSeriesQuery",
+                    key: 'performTimeSeriesQuery',
                     value: function performTimeSeriesQuery(query, target, options) {
                         var exprDate = options.range.to.utc().format('YYYY-MM-DD');
                         var exprTime = options.range.to.utc().format('HH:mm:ss');
@@ -125,7 +128,7 @@ System.register(["app/core/table_model"], function (_export, _context) {
                         });
                     }
                 }, {
-                    key: "query",
+                    key: 'query',
                     value: function query(options) {
 
                         var queries = [];
@@ -167,7 +170,80 @@ System.register(["app/core/table_model"], function (_export, _context) {
                         });
                     }
                 }, {
-                    key: "testDatasource",
+                    key: 'annotationQuery',
+                    value: function annotationQuery(options) {
+                        var annotation = options.annotation;
+                        var params = {};
+                        params.StartDate = options.range.from.unix();
+                        params.EndDate = options.range.to.unix();
+                        if (annotation.Source) {
+                            params.Source = annotation.Source;
+                        }
+                        if (annotation.Host) {
+                            params.Host = annotation.Host;
+                        }
+                        if (annotation.CreationUser) {
+                            params.CreationUser = annotation.CreationUser;
+                        }
+                        if (annotation.Owner) {
+                            params.Owner = annotation.Owner;
+                        }
+                        if (annotation.Category) {
+                            params.Category = annotation.Category;
+                        }
+                        if (annotation.Url) {
+                            params.Url = annotation.Url;
+                        }
+                        if (annotation.Message) {
+                            params.Message = annotation.Message;
+                        }
+                        var url = this.url + '/api/annotation/query?';
+                        if (Object.keys(params).length > 0) {
+                            url += jQuery.param(params);
+                        }
+                        var annotateUrl = this.annotateUrl;
+                        return this.backendSrv.datasourceRequest({
+                            url: url,
+                            method: 'GET',
+                            datasource: this
+                        }).then(function (response) {
+                            if (response.status === 200) {
+                                var events = [];
+                                _.each(response.data, function (a) {
+                                    var text = [];
+                                    if (a.Source) {
+                                        text.push("Source: " + a.Source);
+                                    }
+                                    if (a.Host) {
+                                        text.push("Host: " + a.Host);
+                                    }
+                                    if (a.CreationUser) {
+                                        text.push("User: " + a.User);
+                                    }
+                                    if (a.Owner) {
+                                        text.push("Owner: " + a.Owner);
+                                    }
+                                    if (a.Url) {
+                                        text.push('<a href="' + a.Url + '">' + a.Url.substring(0, 50) + '</a>');
+                                    }
+                                    if (a.Message) {
+                                        text.push(a.Message);
+                                    }
+                                    text.push('<a href="' + annotateUrl + '/annotation' + '?id=' + encodeURIComponent(a.Id) + '" target="_blank">Edit this annotation</a>');
+                                    var grafanaAnnotation = {
+                                        annotation: annotation,
+                                        time: moment(a.StartDate).utc().unix() * 1000,
+                                        title: a.Category,
+                                        text: text.join("<br>")
+                                    };
+                                    events.push(grafanaAnnotation);
+                                });
+                                return events;
+                            }
+                        });
+                    }
+                }, {
+                    key: 'testDatasource',
                     value: function testDatasource() {
                         return this.backendSrv.datasourceRequest({
                             url: this.url + '/',
@@ -183,7 +259,7 @@ System.register(["app/core/table_model"], function (_export, _context) {
                 return BosunDatasource;
             }());
 
-            _export("BosunDatasource", BosunDatasource);
+            _export('BosunDatasource', BosunDatasource);
         }
     };
 });

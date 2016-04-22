@@ -7,13 +7,13 @@ BosunConfigCtrl.templateUrl = 'partials/config.html';
 class BosunQueryOptionsCtrl {}
 BosunQueryOptionsCtrl.templateUrl = 'partials/query.options.html';
 
-//class BosunAnnotationsQueryCtrl {}
-//BosunAnnotationsQueryCtrl.templateUrl = 'partials/annotations.editor.html'
+class BosunAnnotationsQueryCtrl {}
+BosunAnnotationsQueryCtrl.templateUrl = 'partials/annotations.editor.html'
 
 export {
   BosunDatasource as Datasource,
   BosunDatasourceQueryCtrl as QueryCtrl,
   BosunConfigCtrl as ConfigCtrl,
   BosunQueryOptionsCtrl as QueryOptionsCtrl,
-//  BosunAnnotationsQueryCtrl as AnnotationsQueryCtrl
+  BosunAnnotationsQueryCtrl as AnnotationsQueryCtrl
 };

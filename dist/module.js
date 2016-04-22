@@ -1,7 +1,7 @@
 'use strict';
 
 System.register(['./datasource', './query_ctrl'], function (_export, _context) {
-  var BosunDatasource, BosunDatasourceQueryCtrl, BosunConfigCtrl, BosunQueryOptionsCtrl;
+  var BosunDatasource, BosunDatasourceQueryCtrl, BosunConfigCtrl, BosunQueryOptionsCtrl, BosunAnnotationsQueryCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -28,8 +28,11 @@ System.register(['./datasource', './query_ctrl'], function (_export, _context) {
 
       BosunQueryOptionsCtrl.templateUrl = 'partials/query.options.html';
 
-      //class BosunAnnotationsQueryCtrl {}
-      //BosunAnnotationsQueryCtrl.templateUrl = 'partials/annotations.editor.html'
+      _export('AnnotationsQueryCtrl', BosunAnnotationsQueryCtrl = function BosunAnnotationsQueryCtrl() {
+        _classCallCheck(this, BosunAnnotationsQueryCtrl);
+      });
+
+      BosunAnnotationsQueryCtrl.templateUrl = 'partials/annotations.editor.html';
 
       _export('Datasource', BosunDatasource);
 
@@ -38,6 +41,8 @@ System.register(['./datasource', './query_ctrl'], function (_export, _context) {
       _export('ConfigCtrl', BosunConfigCtrl);
 
       _export('QueryOptionsCtrl', BosunQueryOptionsCtrl);
+
+      _export('AnnotationsQueryCtrl', BosunAnnotationsQueryCtrl);
     }
   };
 });

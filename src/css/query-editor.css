@@ -2,7 +2,9 @@
   width: 75px;
 }
 
-
-.gf-form-textarea {
-	min-width: 350px !important;
+.gf-form-bosun {
+  align-items:flex-start;
+  -webkit-align-items: flex-start;
+  -ms-flex-align: flex-start;
+  width: 80%;
 }
